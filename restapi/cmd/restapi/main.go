@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"database/sql"
 	"fmt"
 	"net/http"
+	// "github.com/jackc/pgx/v5/stdlib"
 
 	"github.com/shivamxverma/studentapi/internal/types"
 )
@@ -26,6 +28,21 @@ func createTodosHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	db, err := sql.Open("pgx", "postgres://postgres:postgres@localhost:5432/todo_app?sslmode=disable")
+
+	if err != nil {
+		fmt.Println("db open error:", err)
+		return
+	}
+
+	err = db.Ping()
+	if err != nil {
+		fmt.Println("db ping error:", err)
+		return
+	}
+
+	fmt.Println("database connected")
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /", homeHandler)
